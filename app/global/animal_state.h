@@ -1,0 +1,8 @@
+//
+// Created by wangc on 2026/4/25.
+//
+
+#ifndef ALL_ASSEMBLE_ANIMAL_STATE_H
+#define ALL_ASSEMBLE_ANIMAL_STATE_H
+
+#endif //ALL_ASSEMBLE_ANIMAL_STATE_H
