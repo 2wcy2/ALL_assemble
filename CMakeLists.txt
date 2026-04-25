@@ -33,13 +33,7 @@ enable_language(C ASM)
 
 # Create an executable object type
 add_executable(${CMAKE_PROJECT_NAME}
-        app/tasks/temperature.c
-        app/tasks/eeprom.c
-        app/tasks/steps.c
-        app/tasks/gps.c
-        app/tasks/communication.c
-        app/global/animal_state.c
-        app/global/animal_state.h
+
 )
 
 # Add STM32CubeMX generated sources
@@ -52,13 +46,20 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
-        Drivers/AHT20-F/aht20.c
+        bsp/AHT20-F/aht20.c
+        app/tasks/temperature.c
+        app/tasks/eeprom.c
+        app/tasks/steps.c
+        app/tasks/gps.c
+        app/tasks/communication.c
+        app/global/animal_state.c
+        bsp/m24c64/m24c64.c
     # Add user sources here
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
-        Drivers/AHT20-F
+        bsp
     # Add user defined include paths
 )
 

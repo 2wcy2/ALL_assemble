@@ -54,10 +54,10 @@ void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPS_PWR_GPIO_Port, GPS_PWR_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOB, GPS_PWR_Pin|EEPROM_WP_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, AHT20_PWR_Pin|PWR_4G_Pin|EEPROM_WP_Pin|EEPROM_PWR_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, AHT20_PWR_Pin|PWR_4G_Pin|EEPROM_PWR_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : LED_Pin */
   GPIO_InitStruct.Pin = LED_Pin;
