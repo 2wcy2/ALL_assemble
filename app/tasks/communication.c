@@ -17,7 +17,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
     }
 }
 void Start_communication_task(void *argument) {
-    char trans_data[]="AT+CSQ?\r\n";
+    char trans_data[]="AT+\r\n";
     HAL_UARTEx_ReceiveToIdle_DMA(&TIANQI_UART,message1,50);
     rx_varible_flag=1;
     osDelay(200);

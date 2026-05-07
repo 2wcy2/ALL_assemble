@@ -33,6 +33,7 @@ enable_language(C ASM)
 
 # Create an executable object type
 add_executable(${CMAKE_PROJECT_NAME}
+        app/gprmc/gprmc.c
 
 )
 
@@ -60,6 +61,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
         bsp
+        app
     # Add user defined include paths
 )
 
