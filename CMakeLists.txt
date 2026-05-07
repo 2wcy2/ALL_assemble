@@ -34,6 +34,7 @@ enable_language(C ASM)
 # Create an executable object type
 add_executable(${CMAKE_PROJECT_NAME}
         app/gprmc/gprmc.c
+        app/tasks/4g_commun.c
 
 )
 
@@ -52,7 +53,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
         app/tasks/eeprom.c
         app/tasks/steps.c
         app/tasks/gps.c
-        app/tasks/communication.c
+        app/tasks/star_commun.c
         app/global/animal_state.c
         bsp/m24c64/m24c64.c
     # Add user sources here

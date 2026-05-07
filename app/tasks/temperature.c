@@ -15,11 +15,11 @@ void triger_cal(float *tem,float *hum) {
 }
 
 void Start_temp_cal_task(void *argument) {
-    float tem,hum;
-    triger_cal(&tem,&hum);
-    char str[50];
-    sprintf(str,"Temperature: %.2f C",tem);
-    //HAL_UART_Transmit(&test_uart,(uint8_t *)str,strlen(str),1000);
+    // float tem,hum;
+    // triger_cal(&tem,&hum);
+    // char str[50];
+    // sprintf(str,"Temperature: %.2f C",tem);
+    // HAL_UART_Transmit(&test_uart,(uint8_t *)str,strlen(str),1000);
     while (1) {
         osDelay(10);
     }

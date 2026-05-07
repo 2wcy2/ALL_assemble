@@ -48,7 +48,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+int rx_test_flag = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -60,10 +60,21 @@ void MX_FREERTOS_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-int fputc(int ch, FILE *f)
-{
-  HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 100);
-  return ch;
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
+  if (huart==&GPS_UART) {
+    rx_gps_flag=1;
+  }
+  else if (huart==&UART_4g) {
+    len_4g = Size;
+    rx_4g_flag=1;
+  }
+  else if (huart==&TIANQI_UART) {
+    rx_tianqi_flag=1;
+  }
+  else if (huart==&test_uart) {
+    len_test=Size;
+    rx_test_flag=1;
+  }
 }
 /* USER CODE END 0 */
 

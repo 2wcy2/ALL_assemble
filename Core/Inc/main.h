@@ -38,6 +38,12 @@ extern "C" {
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
   extern osMutexId_t i2c1mutexHandle;   // 声明 I2C 互斥量句柄
+  extern int rx_tianqi_flag;
+  extern int rx_4g_flag;
+  extern int rx_gps_flag;
+  extern int rx_test_flag;
+  extern uint16_t len_test;
+  extern uint16_t len_4g;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/

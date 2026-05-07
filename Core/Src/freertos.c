@@ -52,7 +52,7 @@ osThreadId_t temp_cal_taskHandle;
 const osThreadAttr_t temp_cal_task_attributes = {
   .name = "temp_cal_task",
   .stack_size = 256 * 4,
-  .priority = (osPriority_t) osPriorityNormal3,
+  .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for steps_cal_task */
 osThreadId_t steps_cal_taskHandle;
@@ -68,10 +68,10 @@ const osThreadAttr_t gps_locate_tast_attributes = {
   .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
-/* Definitions for communication_t */
-osThreadId_t communication_tHandle;
-const osThreadAttr_t communication_t_attributes = {
-  .name = "communication_t",
+/* Definitions for star_commun */
+osThreadId_t star_communHandle;
+const osThreadAttr_t star_commun_attributes = {
+  .name = "star_commun",
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
@@ -79,8 +79,15 @@ const osThreadAttr_t communication_t_attributes = {
 osThreadId_t store_taskHandle;
 const osThreadAttr_t store_task_attributes = {
   .name = "store_task",
-  .stack_size = 128 * 4,
+  .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityLow,
+};
+/* Definitions for commun_4g */
+osThreadId_t commun_4gHandle;
+const osThreadAttr_t commun_4g_attributes = {
+  .name = "commun_4g",
+  .stack_size = 512 * 4,
+  .priority = (osPriority_t) osPriorityHigh,
 };
 /* Definitions for i2c1mutex */
 osMutexId_t i2c1mutexHandle;
@@ -96,8 +103,9 @@ const osMutexAttr_t i2c1mutex_attributes = {
 void Start_temp_cal_task(void *argument);
 extern void StartT_steps_cal_task(void *argument);
 extern void Start_gps_locate_tast(void *argument);
-extern void Start_communication_task(void *argument);
+extern void Start_star_communication_task(void *argument);
 extern void Start_store_task(void *argument);
+extern void Start_4g_commun(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -140,11 +148,14 @@ void MX_FREERTOS_Init(void) {
   /* creation of gps_locate_tast */
   gps_locate_tastHandle = osThreadNew(Start_gps_locate_tast, NULL, &gps_locate_tast_attributes);
 
-  /* creation of communication_t */
-  communication_tHandle = osThreadNew(Start_communication_task, NULL, &communication_t_attributes);
+  /* creation of star_commun */
+  star_communHandle = osThreadNew(Start_star_communication_task, NULL, &star_commun_attributes);
 
   /* creation of store_task */
   store_taskHandle = osThreadNew(Start_store_task, NULL, &store_task_attributes);
+
+  /* creation of commun_4g */
+  commun_4gHandle = osThreadNew(Start_4g_commun, NULL, &commun_4g_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
