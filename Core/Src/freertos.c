@@ -58,7 +58,7 @@ const osThreadAttr_t temp_cal_task_attributes = {
 osThreadId_t steps_cal_taskHandle;
 const osThreadAttr_t steps_cal_task_attributes = {
   .name = "steps_cal_task",
-  .stack_size = 128 * 4,
+  .stack_size = 1024 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for gps_locate_tast */

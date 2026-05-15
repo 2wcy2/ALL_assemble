@@ -1,7 +1,7 @@
 #ifndef __M24C64_H
 #define __M24C64_H
 
-#include "i2c.h"
+#include "custom_bus.h"
 #include "gpio.h"
 
 /* ----------------- 硬件相关配置（按实际修改） ----------------- */

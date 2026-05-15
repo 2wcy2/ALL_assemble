@@ -26,6 +26,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "custom_bus.h"
 #include "tasks/init.h"
 /* USER CODE END Includes */
 
@@ -113,6 +114,8 @@ int main(void)
   MX_USART3_UART_Init();
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
+  BSP_I2C1_Init();
+  HAL_Delay(10);
   init_tasks();
   // uint16_t rxlen;
   // HAL_GPIO_WritePin(PWR_4G_GPIO_Port, PWR_4G_Pin, GPIO_PIN_SET);

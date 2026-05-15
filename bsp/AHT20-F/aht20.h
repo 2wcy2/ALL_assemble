@@ -1,8 +1,7 @@
 #ifndef __DHT20_H__
 #define __DHT20_H__
 
-#include "i2c.h"
-#include "main.h"
+#include "custom_bus.h"
 
 // 初始化AHT20
 void AHT20_Init();
