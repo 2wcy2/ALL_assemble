@@ -9,7 +9,7 @@ void M24C64_OFF() {
 void M24C64_abble_write() {
     HAL_GPIO_WritePin(EEPROM_WP_GPIO_Port, EEPROM_WP_Pin,GPIO_PIN_RESET);
 }
-void M24C64_disabble_write() {
+void M24C64_disable_write() {
     HAL_GPIO_WritePin(EEPROM_WP_GPIO_Port, EEPROM_WP_Pin,GPIO_PIN_SET);
 }
 

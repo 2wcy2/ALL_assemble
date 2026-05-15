@@ -15,7 +15,7 @@
 void M24C64_ON();
 void M24C64_OFF();
 void M24C64_abble_write();
-void M24C64_disabble_write();
+void M24C64_disable_write();
 HAL_StatusTypeDef M24C64_WaitReady(void);
 uint8_t M24C64_WriteByte(uint16_t addr, uint8_t data);
 uint8_t M24C64_WritePage(uint16_t addr, uint8_t *pData, uint16_t len);

@@ -35,6 +35,8 @@ enable_language(C ASM)
 add_executable(${CMAKE_PROJECT_NAME}
         app/gprmc/gprmc.c
         app/tasks/4g_commun.c
+        app/tasks/conf_init.c
+        app/tasks/init.h
 
 )
 

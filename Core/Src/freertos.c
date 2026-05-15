@@ -75,13 +75,6 @@ const osThreadAttr_t star_commun_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
-/* Definitions for store_task */
-osThreadId_t store_taskHandle;
-const osThreadAttr_t store_task_attributes = {
-  .name = "store_task",
-  .stack_size = 256 * 4,
-  .priority = (osPriority_t) osPriorityLow,
-};
 /* Definitions for commun_4g */
 osThreadId_t commun_4gHandle;
 const osThreadAttr_t commun_4g_attributes = {
@@ -104,7 +97,6 @@ void Start_temp_cal_task(void *argument);
 extern void StartT_steps_cal_task(void *argument);
 extern void Start_gps_locate_tast(void *argument);
 extern void Start_star_communication_task(void *argument);
-extern void Start_store_task(void *argument);
 extern void Start_4g_commun(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -150,9 +142,6 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of star_commun */
   star_communHandle = osThreadNew(Start_star_communication_task, NULL, &star_commun_attributes);
-
-  /* creation of store_task */
-  store_taskHandle = osThreadNew(Start_store_task, NULL, &store_task_attributes);
 
   /* creation of commun_4g */
   commun_4gHandle = osThreadNew(Start_4g_commun, NULL, &commun_4g_attributes);

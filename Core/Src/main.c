@@ -21,13 +21,12 @@
 #include "cmsis_os.h"
 #include "adc.h"
 #include "dma.h"
-#include "i2c.h"
 #include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "tasks/init.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -108,13 +107,13 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_DMA_Init();
-  MX_I2C1_Init();
   MX_LPUART1_UART_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   MX_USART3_UART_Init();
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
+  init_tasks();
   // uint16_t rxlen;
   // HAL_GPIO_WritePin(PWR_4G_GPIO_Port, PWR_4G_Pin, GPIO_PIN_SET);
   // HAL_UARTEx_ReceiveToIdle_IT(&UART_4g,message,50);
