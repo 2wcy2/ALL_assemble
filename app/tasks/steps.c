@@ -6,15 +6,15 @@
 #include "usart.h"
 #include <stdio.h>
 #include <string.h>
+#include "FreeRTOS.h"
+#include "task.h"
 
-void my_delay(uint32_t Delay) {
-    osDelay(Delay);
-}
 void StartT_steps_cal_task(void *argument)
 {
+
     // 1. 初始化 I2C 总线（获得互斥锁后执行）
     osMutexAcquire(i2c1mutexHandle, osWaitForever);
-
+    vTaskSuspendAll();
     LIS2DUX12_IO_t io = {
         .Init      = BSP_I2C1_Init,
         .DeInit    = BSP_I2C1_DeInit,
@@ -23,7 +23,7 @@ void StartT_steps_cal_task(void *argument)
         .WriteReg  = BSP_I2C1_WriteReg,
         .ReadReg   = BSP_I2C1_ReadReg,
         .GetTick   = BSP_GetTick,
-        .Delay     = my_delay
+        .Delay     = HAL_Delay
     };
 
     LIS2DUX12_Object_t obj;
@@ -95,8 +95,8 @@ void StartT_steps_cal_task(void *argument)
 
     osMutexRelease(i2c1mutexHandle);
     // 等待传感器稳定（计步器算法需要几个周期）
-    osDelay(2000);
-
+    HAL_Delay(2000);
+    xTaskResumeAll();
     // ------------------- 主循环 -------------------
     char msg[64];
     uint16_t last_steps = 0;
