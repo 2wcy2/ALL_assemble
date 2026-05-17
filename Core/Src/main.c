@@ -27,7 +27,6 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "custom_bus.h"
-#include "lis2dux12.h"
 #include "tasks/init.h"
 /* USER CODE END Includes */
 
@@ -118,6 +117,11 @@ int main(void)
   BSP_I2C1_Init();
   HAL_Delay(10);
   init_tasks();
+
+
+
+
+
 
   // uint16_t rxlen;
   // HAL_GPIO_WritePin(PWR_4G_GPIO_Port, PWR_4G_Pin, GPIO_PIN_SET);

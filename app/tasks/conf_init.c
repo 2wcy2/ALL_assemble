@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "lis2dux12.h"
 #include "usart.h"
 #include "main.h"
 #include "M24c64/m24c64.h"
@@ -9,13 +10,14 @@
 #define INIT_ADDR 0x0000
 #define GAP_HOUR_ADDR 0x0001
 #define GAP_MINUTE_ADDR 0x0002
+#define STEP_INIT_ADDR 0x0003
 
 typedef enum
 {
     non_init = 0x00,
     are_init = 0x01,
 
-} init_byte_type_def;
+} gap_init_byte_type_def;
 uint8_t read_config_from_eeprom(uint8_t *hour, uint8_t *minute);
 static uint8_t parse_hour_minute(char *msg, uint8_t *hour, uint8_t *minute);
 
@@ -26,6 +28,8 @@ int de_init() {
     M24C64_disable_write();
     M24C64_OFF();
 }
+
+
 
 int init_tasks(void) {
     uint8_t init_state;

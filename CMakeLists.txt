@@ -37,6 +37,8 @@ add_executable(${CMAKE_PROJECT_NAME}
         app/tasks/4g_commun.c
         app/tasks/conf_init.c
         app/tasks/init.h
+        bsp/MY_lis2dux12/MY_lis2dux12.c
+        bsp/MY_lis2dux12/MY_lis2dux12.h
 
 )
 
