@@ -27,7 +27,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "custom_bus.h"
-#include "tasks/init.h"
+#include "../../app/init/init.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -48,7 +48,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-int rx_test_flag = 0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -115,32 +115,9 @@ int main(void)
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
   BSP_I2C1_Init();
-  HAL_Delay(10);
-  init_tasks();
+  HAL_Delay(20);
+  gap_init();
 
-
-
-
-
-
-  // uint16_t rxlen;
-  // HAL_GPIO_WritePin(PWR_4G_GPIO_Port, PWR_4G_Pin, GPIO_PIN_SET);
-  // HAL_UARTEx_ReceiveToIdle_IT(&UART_4g,message,50);
-  // HAL_Delay(5000);
-  // HAL_UART_Transmit(&UART_4g,"AT?\r\n",2,HAL_MAX_DELAY);
-  // HAL_Delay(1000);
-  // HAL_UART_Transmit(&UART_4g,"AT?\r\n",2,HAL_MAX_DELAY);
-  // HAL_Delay(1000);
-  // HAL_GPIO_WritePin(PWR_4G_GPIO_Port, PWR_4G_Pin, GPIO_PIN_RESET);
-
-
-
-  // uint8_t ret;
-  // HAL_I2C_Mem_Read(&hi2c1,0x32,0x0f,I2C_MEMADD_SIZE_8BIT,&ret,1,1000);
-
-
-  //HAL_GPIO_WritePin(GPS_PWR_GPIO_Port, GPS_PWR_Pin, GPIO_PIN_RESET);
-  //HAL_UARTEx_ReceiveToIdle_IT(&GPS_UART,message,50);
 
 
   /* USER CODE END 2 */

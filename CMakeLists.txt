@@ -35,10 +35,11 @@ enable_language(C ASM)
 add_executable(${CMAKE_PROJECT_NAME}
         app/gprmc/gprmc.c
         app/tasks/4g_commun.c
-        app/tasks/conf_init.c
-        app/tasks/init.h
+        app/init/conf_init.c
+        app/init/init.h
         bsp/MY_lis2dux12/MY_lis2dux12.c
         bsp/MY_lis2dux12/MY_lis2dux12.h
+        app/tasks/test.c
 
 )
 
@@ -54,7 +55,6 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
         bsp/AHT20-F/aht20.c
         app/tasks/temperature.c
-        app/tasks/eeprom.c
         app/tasks/steps.c
         app/tasks/gps.c
         app/tasks/star_commun.c

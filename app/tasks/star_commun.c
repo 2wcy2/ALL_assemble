@@ -3,7 +3,6 @@
 #include "usart.h"
 #include "main.h"
 char message1[50], message2[50];
-int rx_varible_flag=0,rxcplt_flag=0;
 int rx_tianqi_flag=0;
 
 void Start_star_communication_task(void *argument) {
