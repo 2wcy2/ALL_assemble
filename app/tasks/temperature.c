@@ -21,6 +21,6 @@ void Start_temp_cal_task(void *argument) {
     // sprintf(str,"Temperature: %.2f C",tem);
     // HAL_UART_Transmit(&test_uart,(uint8_t *)str,strlen(str),1000);
     while (1) {
-        osDelay(10);
+        osDelay(1000);
     }
  }

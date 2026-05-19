@@ -43,5 +43,7 @@ typedef struct {
 
 int parse_gprmc(const char *nmea_str, GPRMC_DATA *data);
 
+// 从缓冲区中查找第一条有效的 RMC 语句并解析（缓冲区可包含多条语句，以 \r\n 分隔）
+int parse_gprmc_from_buffer(const char *buf, GPRMC_DATA *data);
 
 #endif //GPSTEST_GPRMC_H

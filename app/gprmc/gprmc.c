@@ -307,3 +307,52 @@ int parse_gprmc(const char *nmea_str, GPRMC_DATA *data) {
 
     return 0;
 }
+
+// ================== 新增功能：从缓冲区提取 RMC 语句并解析 ==================
+
+// 辅助函数：从缓冲区中提取一条完整的 NMEA 语句（以 $ 开头，以 \r\n 或 \n 结尾）
+// 返回语句长度（包括结尾的 \r\n），若未找到返回 0
+static size_t extract_nmea_line(const char *buf, char *line_buf, size_t line_buf_size) {
+    const char *start = strchr(buf, '$');
+    if (!start) return 0;
+    const char *end = strstr(start, "\r\n");
+    if (!end) {
+        end = strchr(start, '\n');
+        if (!end) return 0;
+    }
+    size_t len = end - start + (end[0]=='\r' ? 2 : 1);
+    if (len >= line_buf_size) len = line_buf_size - 1;
+    strncpy(line_buf, start, len);
+    line_buf[len] = '\0';
+    // 去除末尾换行符，方便解析
+    char *nl = strchr(line_buf, '\r');
+    if (nl) *nl = '\0';
+    nl = strchr(line_buf, '\n');
+    if (nl) *nl = '\0';
+    return len;
+}
+
+int parse_gprmc_from_buffer(const char *buf, GPRMC_DATA *data) {
+    if (!buf || !data) return -1;
+    const char *p = buf;
+    char line[128];
+    while (*p) {
+        if (extract_nmea_line(p, line, sizeof(line)) > 0) {
+            // 检查是否为 RMC 语句
+            if (strncmp(line, "$GPRMC", 6) == 0 || strncmp(line, "$GNRMC", 6) == 0) {
+                int ret = parse_gprmc(line, data);
+                if (ret == 0) return 0;  // 解析成功
+            }
+            // 跳过当前行，继续下一行
+            p = strstr(p, "\r\n");
+            if (p) p += 2;
+            else {
+                p = strchr(p, '\n');
+                if (p) p++;
+            }
+        } else {
+            break;
+        }
+    }
+    return -5; // 未找到有效的 RMC 语句
+}

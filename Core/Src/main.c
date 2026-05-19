@@ -61,6 +61,7 @@ void MX_FREERTOS_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
+  HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
   if (huart==&GPS_UART) {
     rx_gps_flag=1;
   }
@@ -72,8 +73,6 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
     rx_tianqi_flag=1;
   }
   else if (huart==&test_uart) {
-    len_test=Size;
-    rx_test_flag=1;
   }
 }
 /* USER CODE END 0 */

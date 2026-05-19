@@ -2,7 +2,6 @@
 #include "cmsis_os2.h"
 #include "usart.h"
 #include "main.h"
-char message1[50], message2[50];
 int rx_tianqi_flag=0;
 
 void Start_star_communication_task(void *argument) {
@@ -20,6 +19,6 @@ void Start_star_communication_task(void *argument) {
         //     HAL_UART_Transmit(&test_uart,message1,strlen(message1),HAL_MAX_DELAY);
         //     rxcplt_flag=0;
         // }
-        osDelay(100);
+        osDelay(1000);
     }
 }
