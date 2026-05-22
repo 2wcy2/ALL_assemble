@@ -48,6 +48,7 @@ extern "C" {
   extern uint16_t len_4g;
   extern TaskHandle_t xGpsTaskHandle;
   extern osThreadId_t info_assemble_tHandle;
+  extern osMessageQueueId_t info_transHandle;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/

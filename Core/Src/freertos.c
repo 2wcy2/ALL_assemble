@@ -79,15 +79,13 @@ const osThreadAttr_t commun_4g_attributes = {
 osThreadId_t info_assemble_tHandle;
 const osThreadAttr_t info_assemble_t_attributes = {
   .name = "info_assemble_t",
-  .stack_size = 512 * 4,
+  .stack_size = 1024 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-/* Definitions for Comu_way_Mag_Ta */
-osThreadId_t Comu_way_Mag_TaHandle;
-const osThreadAttr_t Comu_way_Mag_Ta_attributes = {
-  .name = "Comu_way_Mag_Ta",
-  .stack_size = 256 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
+/* Definitions for info_trans */
+osMessageQueueId_t info_transHandle;
+const osMessageQueueAttr_t info_trans_attributes = {
+  .name = "info_trans"
 };
 /* Definitions for i2c1mutex */
 osMutexId_t i2c1mutexHandle;
@@ -104,8 +102,7 @@ void Start_SensorTask(void *argument);
 extern void Start_gps_locate_task(void *argument);
 extern void Start_star_communication_task(void *argument);
 extern void Start_4g_commun(void *argument);
-extern void StartT_info_assemble_task(void *argument);
-extern void Start_Comu_way_Mag_Task(void *argument);
+extern void Start_info_assemble_task(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -134,6 +131,10 @@ void MX_FREERTOS_Init(void) {
   /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
 
+  /* Create the queue(s) */
+  /* creation of info_trans */
+  info_transHandle = osMessageQueueNew (16, sizeof(uint8_t*), &info_trans_attributes);
+
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
@@ -152,10 +153,7 @@ void MX_FREERTOS_Init(void) {
   commun_4gHandle = osThreadNew(Start_4g_commun, NULL, &commun_4g_attributes);
 
   /* creation of info_assemble_t */
-  info_assemble_tHandle = osThreadNew(StartT_info_assemble_task, NULL, &info_assemble_t_attributes);
-
-  /* creation of Comu_way_Mag_Ta */
-  Comu_way_Mag_TaHandle = osThreadNew(Start_Comu_way_Mag_Task, NULL, &Comu_way_Mag_Ta_attributes);
+  info_assemble_tHandle = osThreadNew(Start_info_assemble_task, NULL, &info_assemble_t_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */

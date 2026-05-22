@@ -25,9 +25,10 @@ int ATwake() {
     char receivestr[10]="";
     HAL_UARTEx_ReceiveToIdle_DMA(star_uart,(uint8_t*)receivestr,10);
     HAL_UART_Transmit(star_uart,(uint8_t*)"AT\r\n",4,HAL_MAX_DELAY);
-    while (rx_tianqi_flag==0) {
-        osDelay(100);
+    osDelay(1000);
+    for(int i=0;i<3&&rx_tianqi_flag==0;i++) {
         HAL_UART_Transmit(star_uart,(uint8_t*)"AT\r\n",4,HAL_MAX_DELAY);
+        osDelay(100);
     }
     rx_tianqi_flag=0;
     if (receivestr[2]=='O'&&receivestr[3]=='K') return 1;

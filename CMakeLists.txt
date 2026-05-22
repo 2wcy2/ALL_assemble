@@ -41,8 +41,9 @@ add_executable(${CMAKE_PROJECT_NAME}
         bsp/MY_lis2dux12/MY_lis2dux12.h
         app/tasks/sensor_task.c
         app/tasks/info_assemble.c
-        app/tasks/trans_way_select.c
         app/STAR_AT/atsend.c
+        app/commun_manager/commun_manager.c
+        app/commun_manager/commun_manager.h
 
 )
 

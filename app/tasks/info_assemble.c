@@ -1,7 +1,10 @@
+
 #include "cmsis_os2.h"
 #include "main.h"
+#include "usart.h"
 #include "global/animal_state.h"
-
+#include "commun_manager/commun_manager.h"
+#define data_len 25
 
 // 辅助函数：将 uint16_t 转为大端序 2 字节
 void uint16ToBytes(uint16_t val, uint8_t *buf) {
@@ -65,12 +68,17 @@ void framemaker(uint8_t *outstr, animalState *state) {
 }
 
 
-void StartT_info_assemble_task(void *argument) {
+void Start_info_assemble_task(void *argument) {
     while (1) {
         uint32_t flags = osThreadFlagsWait(FLAG_SENSOR_READY | FLAG_GNSS_READY,
                                     osFlagsWaitAll,   // 关键：必须两个标志位都置位
                                     osWaitForever);
+        uint8_t* message=pvPortMalloc(sizeof(uint8_t)*data_len);
+        memset(message,0,sizeof(uint8_t)*data_len);
+        framemaker(message,&animal_state);
+        SelectCommMethod();
+        osMessageQueuePut(info_transHandle,&message,0,osWaitForever);
+        HAL_UART_Transmit(&test_uart, message, data_len, 1000);
         HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-        osDelay(100);
     }
 }
