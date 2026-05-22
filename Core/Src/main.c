@@ -61,7 +61,6 @@ void MX_FREERTOS_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
-  HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
   if (huart==&GPS_UART) {
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     if (xGpsTaskHandle != NULL) {

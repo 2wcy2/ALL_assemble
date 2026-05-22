@@ -32,7 +32,7 @@ void Clear_UART_Error(UART_HandleTypeDef *huart) {
 }
 
 
-void Start_gps_locate_tast(void *argument) {
+void Start_gps_locate_task(void *argument) {
     xGpsTaskHandle = xTaskGetCurrentTaskHandle();
     int rt;
     Clear_UART_Error(&GPS_UART);
@@ -44,6 +44,7 @@ void Start_gps_locate_tast(void *argument) {
         GPRMC_DATA rmc_data;
         memset(&rmc_data, 0, sizeof(rmc_data));
         if (parse_gprmc_from_buffer(gps_message, &rmc_data) == 0) {
+            osThreadFlagsSet(info_assemble_tHandle, FLAG_GNSS_READY);
             if (rmc_data.valid==1) {
                 strcpy(animal_state.beijing_date,rmc_data.beijing_date);
                 strcpy(animal_state.beijing_time,rmc_data.beijing_time);
@@ -51,6 +52,7 @@ void Start_gps_locate_tast(void *argument) {
                 animal_state.longitude = rmc_data.longitude;
                 animal_state.speed = rmc_data.speed;
                 animal_state.beijing_date_time = rmc_data.beijing_date_time;
+                osThreadFlagsSet(info_assemble_tHandle, FLAG_GNSS_READY);
             }
             // 解析成功
             // char msg[128];

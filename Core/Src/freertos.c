@@ -47,24 +47,17 @@
 /* USER CODE BEGIN Variables */
 
 /* USER CODE END Variables */
-/* Definitions for temp_cal_task */
-osThreadId_t temp_cal_taskHandle;
-const osThreadAttr_t temp_cal_task_attributes = {
-  .name = "temp_cal_task",
+/* Definitions for SensorTask */
+osThreadId_t SensorTaskHandle;
+const osThreadAttr_t SensorTask_attributes = {
+  .name = "SensorTask",
   .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-/* Definitions for steps_cal_task */
-osThreadId_t steps_cal_taskHandle;
-const osThreadAttr_t steps_cal_task_attributes = {
-  .name = "steps_cal_task",
-  .stack_size = 512 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
-};
-/* Definitions for gps_locate_tast */
-osThreadId_t gps_locate_tastHandle;
-const osThreadAttr_t gps_locate_tast_attributes = {
-  .name = "gps_locate_tast",
+/* Definitions for gps_locate_task */
+osThreadId_t gps_locate_taskHandle;
+const osThreadAttr_t gps_locate_task_attributes = {
+  .name = "gps_locate_task",
   .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
@@ -73,7 +66,7 @@ osThreadId_t star_communHandle;
 const osThreadAttr_t star_commun_attributes = {
   .name = "star_commun",
   .stack_size = 256 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
+  .priority = (osPriority_t) osPriorityNormal1,
 };
 /* Definitions for commun_4g */
 osThreadId_t commun_4gHandle;
@@ -82,12 +75,19 @@ const osThreadAttr_t commun_4g_attributes = {
   .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-/* Definitions for battery_voltage */
-osThreadId_t battery_voltageHandle;
-const osThreadAttr_t battery_voltage_attributes = {
-  .name = "battery_voltage",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+/* Definitions for info_assemble_t */
+osThreadId_t info_assemble_tHandle;
+const osThreadAttr_t info_assemble_t_attributes = {
+  .name = "info_assemble_t",
+  .stack_size = 512 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
+/* Definitions for Comu_way_Mag_Ta */
+osThreadId_t Comu_way_Mag_TaHandle;
+const osThreadAttr_t Comu_way_Mag_Ta_attributes = {
+  .name = "Comu_way_Mag_Ta",
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for i2c1mutex */
 osMutexId_t i2c1mutexHandle;
@@ -100,12 +100,12 @@ const osMutexAttr_t i2c1mutex_attributes = {
 
 /* USER CODE END FunctionPrototypes */
 
-void Start_temp_cal_task(void *argument);
-extern void Start_steps_cal_task(void *argument);
-extern void Start_gps_locate_tast(void *argument);
+void Start_SensorTask(void *argument);
+extern void Start_gps_locate_task(void *argument);
 extern void Start_star_communication_task(void *argument);
 extern void Start_4g_commun(void *argument);
-extern void Start_battery_voltage_task(void *argument);
+extern void StartT_info_assemble_task(void *argument);
+extern void Start_Comu_way_Mag_Task(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -139,14 +139,11 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* creation of temp_cal_task */
-  temp_cal_taskHandle = osThreadNew(Start_temp_cal_task, NULL, &temp_cal_task_attributes);
+  /* creation of SensorTask */
+  SensorTaskHandle = osThreadNew(Start_SensorTask, NULL, &SensorTask_attributes);
 
-  /* creation of steps_cal_task */
-  steps_cal_taskHandle = osThreadNew(Start_steps_cal_task, NULL, &steps_cal_task_attributes);
-
-  /* creation of gps_locate_tast */
-  gps_locate_tastHandle = osThreadNew(Start_gps_locate_tast, NULL, &gps_locate_tast_attributes);
+  /* creation of gps_locate_task */
+  gps_locate_taskHandle = osThreadNew(Start_gps_locate_task, NULL, &gps_locate_task_attributes);
 
   /* creation of star_commun */
   star_communHandle = osThreadNew(Start_star_communication_task, NULL, &star_commun_attributes);
@@ -154,8 +151,11 @@ void MX_FREERTOS_Init(void) {
   /* creation of commun_4g */
   commun_4gHandle = osThreadNew(Start_4g_commun, NULL, &commun_4g_attributes);
 
-  /* creation of battery_voltage */
-  battery_voltageHandle = osThreadNew(Start_battery_voltage_task, NULL, &battery_voltage_attributes);
+  /* creation of info_assemble_t */
+  info_assemble_tHandle = osThreadNew(StartT_info_assemble_task, NULL, &info_assemble_t_attributes);
+
+  /* creation of Comu_way_Mag_Ta */
+  Comu_way_Mag_TaHandle = osThreadNew(Start_Comu_way_Mag_Task, NULL, &Comu_way_Mag_Ta_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -167,22 +167,22 @@ void MX_FREERTOS_Init(void) {
 
 }
 
-/* USER CODE BEGIN Header_Start_temp_cal_task */
+/* USER CODE BEGIN Header_Start_SensorTask */
 /**
-  * @brief  Function implementing the temp_cal_task thread.
+  * @brief  Function implementing the SensorTask thread.
   * @param  argument: Not used
   * @retval None
   */
-/* USER CODE END Header_Start_temp_cal_task */
-__weak void Start_temp_cal_task(void *argument)
+/* USER CODE END Header_Start_SensorTask */
+__weak void Start_SensorTask(void *argument)
 {
-  /* USER CODE BEGIN Start_temp_cal_task */
+  /* USER CODE BEGIN Start_SensorTask */
   /* Infinite loop */
   for(;;)
   {
     osDelay(1);
   }
-  /* USER CODE END Start_temp_cal_task */
+  /* USER CODE END Start_SensorTask */
 }
 
 /* Private application code --------------------------------------------------*/

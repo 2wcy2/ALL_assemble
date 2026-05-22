@@ -47,6 +47,7 @@ extern "C" {
   extern uint16_t len_test;
   extern uint16_t len_4g;
   extern TaskHandle_t xGpsTaskHandle;
+  extern osThreadId_t info_assemble_tHandle;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
@@ -83,6 +84,8 @@ void Error_Handler(void);
 #define huart2 UART_4g
 #define huart3 TIANQI_UART
 #define hlpuart1  test_uart
+#define FLAG_SENSOR_READY  0x01
+#define FLAG_GNSS_READY    0x02
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

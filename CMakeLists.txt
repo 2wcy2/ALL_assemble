@@ -39,7 +39,10 @@ add_executable(${CMAKE_PROJECT_NAME}
         app/init/init.h
         bsp/MY_lis2dux12/MY_lis2dux12.c
         bsp/MY_lis2dux12/MY_lis2dux12.h
-        app/tasks/battery_cal.c
+        app/tasks/sensor_task.c
+        app/tasks/info_assemble.c
+        app/tasks/trans_way_select.c
+        app/STAR_AT/atsend.c
 
 )
 
@@ -54,8 +57,6 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
         bsp/AHT20-F/aht20.c
-        app/tasks/temperature.c
-        app/tasks/steps.c
         app/tasks/gps.c
         app/tasks/star_commun.c
         app/global/animal_state.c
