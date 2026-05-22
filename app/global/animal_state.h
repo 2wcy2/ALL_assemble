@@ -13,6 +13,8 @@ typedef struct {
     double latitude;        // 纬度 (度)
     double longitude;       // 经度 (度)
     double speed;           // 地面速度 (km/h)
+    uint32_t steps;             //步数
+    float voltage;          //电池电压
     char beijing_time[12];
     char beijing_date[12];
     DateTime beijing_date_time;

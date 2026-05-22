@@ -5,6 +5,8 @@ animalState animal_state={
     0,
     0,
     0,
+    0,
+    0,
     "",
     "",
     {2026,

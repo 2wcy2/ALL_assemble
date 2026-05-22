@@ -66,7 +66,7 @@ osThreadId_t gps_locate_tastHandle;
 const osThreadAttr_t gps_locate_tast_attributes = {
   .name = "gps_locate_tast",
   .stack_size = 512 * 4,
-  .priority = (osPriority_t) osPriorityAboveNormal,
+  .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for star_commun */
 osThreadId_t star_communHandle;
@@ -81,6 +81,13 @@ const osThreadAttr_t commun_4g_attributes = {
   .name = "commun_4g",
   .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityNormal,
+};
+/* Definitions for battery_voltage */
+osThreadId_t battery_voltageHandle;
+const osThreadAttr_t battery_voltage_attributes = {
+  .name = "battery_voltage",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for i2c1mutex */
 osMutexId_t i2c1mutexHandle;
@@ -98,6 +105,7 @@ extern void Start_steps_cal_task(void *argument);
 extern void Start_gps_locate_tast(void *argument);
 extern void Start_star_communication_task(void *argument);
 extern void Start_4g_commun(void *argument);
+extern void Start_battery_voltage_task(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -145,6 +153,9 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of commun_4g */
   commun_4gHandle = osThreadNew(Start_4g_commun, NULL, &commun_4g_attributes);
+
+  /* creation of battery_voltage */
+  battery_voltageHandle = osThreadNew(Start_battery_voltage_task, NULL, &battery_voltage_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */

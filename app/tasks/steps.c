@@ -5,7 +5,7 @@
 #include <string.h>
 #include "FreeRTOS.h"
 #include "MY_lis2dux12/MY_lis2dux12.h"
-
+#include "global/animal_state.h"
 
 void Start_steps_cal_task(void *argument) {
     register_io();
@@ -17,16 +17,17 @@ void Start_steps_cal_task(void *argument) {
     uint16_t steps;
 
     while (1) {
-        // osMutexAcquire(i2c1mutexHandle, osWaitForever);
-        // // 读取步数
-        // if (read_step(&steps) == 0) {
-        //     sprintf(msg, "Steps: %u\r\n", steps);
-        //     HAL_UART_Transmit(&test_uart, (uint8_t *) msg, strlen(msg), 100);
-        // } else {
-        //     HAL_UART_Transmit(&test_uart, (uint8_t *) "Read steps error\r\n", 18, 100);
-        // }
-        //
-        // osMutexRelease(i2c1mutexHandle);
-        osDelay(500); // 每 500ms 读取一次
+        osMutexAcquire(i2c1mutexHandle, osWaitForever);
+        // 读取步数
+        if (read_step(&steps) == 0) {
+            animal_state.steps=steps;
+            // sprintf(msg, "Steps: %u\r\n", steps);
+            // HAL_UART_Transmit(&test_uart, (uint8_t *) msg, strlen(msg), 100);
+        } else {
+            HAL_UART_Transmit(&test_uart, (uint8_t *) "Read steps error\r\n", 18, 100);
+        }
+
+        osMutexRelease(i2c1mutexHandle);
+        osDelay(5000); // 每 500ms 读取一次
     }
 }

@@ -31,8 +31,10 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "FreeRTOS.h"
 #include "cmsis_os2.h"
 #include "stdio.h"
+#include "task.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -44,6 +46,7 @@ extern "C" {
   extern int rx_test_flag;
   extern uint16_t len_test;
   extern uint16_t len_4g;
+  extern TaskHandle_t xGpsTaskHandle;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
@@ -66,8 +69,6 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define LED_Pin GPIO_PIN_6
 #define LED_GPIO_Port GPIOA
-#define GPS_PWR_Pin GPIO_PIN_0
-#define GPS_PWR_GPIO_Port GPIOB
 #define AHT20_PWR_Pin GPIO_PIN_1
 #define AHT20_PWR_GPIO_Port GPIOB
 #define PWR_4G_Pin GPIO_PIN_2

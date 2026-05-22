@@ -39,6 +39,7 @@ add_executable(${CMAKE_PROJECT_NAME}
         app/init/init.h
         bsp/MY_lis2dux12/MY_lis2dux12.c
         bsp/MY_lis2dux12/MY_lis2dux12.h
+        app/tasks/battery_cal.c
 
 )
 
