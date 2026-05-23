@@ -9,6 +9,7 @@
 
 typedef struct {
     int gps_data_valid;      //gps数据状态（1：有效；0：无效）
+    char gps_location_valid;  //gps是否定位(A/V)
     float temperature;       // 温度（单位：摄氏度）
     double latitude;        // 纬度 (度)
     double longitude;       // 经度 (度)

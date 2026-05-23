@@ -8,7 +8,7 @@
 #include "global/animal_state.h"
 
 int rx_gps_flag=0;
-char gps_message[1000]="";
+char gps_message[1500]="";
 TaskHandle_t xGpsTaskHandle = NULL;
 
 
@@ -34,9 +34,8 @@ void Clear_UART_Error(UART_HandleTypeDef *huart) {
 
 void Start_gps_locate_task(void *argument) {
     xGpsTaskHandle = xTaskGetCurrentTaskHandle();
-    int rt;
     Clear_UART_Error(&GPS_UART);
-    rt=HAL_UARTEx_ReceiveToIdle_DMA(&GPS_UART,gps_message,1000);
+    HAL_UARTEx_ReceiveToIdle_DMA(&GPS_UART,gps_message,1500);
     uint32_t error = HAL_UART_GetError(&GPS_UART);
     while (1) {
         ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
@@ -44,7 +43,6 @@ void Start_gps_locate_task(void *argument) {
         GPRMC_DATA rmc_data;
         memset(&rmc_data, 0, sizeof(rmc_data));
         if (parse_gprmc_from_buffer(gps_message, &rmc_data) == 0) {
-            osThreadFlagsSet(info_assemble_tHandle, FLAG_GNSS_READY);
             if (rmc_data.valid==1) {
                 strcpy(animal_state.beijing_date,rmc_data.beijing_date);
                 strcpy(animal_state.beijing_time,rmc_data.beijing_time);
@@ -52,6 +50,8 @@ void Start_gps_locate_task(void *argument) {
                 animal_state.longitude = rmc_data.longitude;
                 animal_state.speed = rmc_data.speed;
                 animal_state.beijing_date_time = rmc_data.beijing_date_time;
+                animal_state.gps_data_valid = rmc_data.valid;
+                animal_state.gps_location_valid = rmc_data.status;
                 osThreadFlagsSet(info_assemble_tHandle, FLAG_GNSS_READY);
             }
             // 解析成功
@@ -62,7 +62,7 @@ void Start_gps_locate_task(void *argument) {
         }
         memset(gps_message,0,sizeof(gps_message));
         Clear_UART_Error(&GPS_UART);
-        rt=HAL_UARTEx_ReceiveToIdle_DMA(&GPS_UART,gps_message,1000);
+        HAL_UARTEx_ReceiveToIdle_DMA(&GPS_UART,gps_message,1500);
     }
 }
 

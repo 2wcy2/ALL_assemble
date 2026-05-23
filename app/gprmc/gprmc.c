@@ -233,7 +233,8 @@ int parse_gprmc(const char *nmea_str, GPRMC_DATA *data) {
         data->valid = 0;
         // 可以选择继续解析或返回错误
         // 这里继续解析，因为校验和错误可能只是传输问题
-    }
+    }else
+        data->valid=1;
 
     data->checksum = expected_checksum;
 
@@ -262,7 +263,6 @@ int parse_gprmc(const char *nmea_str, GPRMC_DATA *data) {
     // 1. 状态（索引2）
     if (token_count > 2 && strlen(tokens[2]) > 0) {
         data->status = tokens[2][0];
-        data->valid = (data->status == 'A') ? 1 : 0;
     }
 
     // 2. 时间（索引1）

@@ -121,7 +121,7 @@ int main(void)
   // HAL_GPIO_WritePin(PWR_4G_GPIO_Port, PWR_4G_Pin, GPIO_PIN_RESET);
   BSP_I2C1_Init();
   HAL_Delay(20);
-  gap_init();
+  conf_init();
 
 
 

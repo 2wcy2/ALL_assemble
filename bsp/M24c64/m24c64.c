@@ -2,6 +2,7 @@
 
 void M24C64_ON() {
     HAL_GPIO_WritePin(EEPROM_PWR_GPIO_Port, EEPROM_PWR_Pin, GPIO_PIN_SET);
+    HAL_Delay(50);
 }
 void M24C64_OFF() {
     HAL_GPIO_WritePin(EEPROM_PWR_GPIO_Port, EEPROM_PWR_Pin, GPIO_PIN_RESET);
@@ -20,12 +21,13 @@ void M24C64_disable_write() {
 HAL_StatusTypeDef M24C64_WaitReady(void)
 {
     uint32_t tickstart = HAL_GetTick();
-    while (HAL_I2C_IsDeviceReady(&M24C64_I2C, M24C64_ADDR_W, 1, 5) != HAL_OK)
-    {
-        if ((HAL_GetTick() - tickstart) > M24C64_TIMEOUT)
-            return HAL_BUSY;
-    }
-    return HAL_OK;
+    do {
+        if (HAL_I2C_IsDeviceReady(&M24C64_I2C, M24C64_ADDR_W, 1, 2) == HAL_OK)
+            return HAL_OK;
+        // 短暂延时后再试，避免占满总线
+        HAL_Delay(1);
+    } while ((HAL_GetTick() - tickstart) < 10);   // 总超时 10ms，覆盖最差情况
+    return HAL_BUSY;
 }
 
 /**
@@ -36,6 +38,7 @@ HAL_StatusTypeDef M24C64_WaitReady(void)
  */
 uint8_t M24C64_WriteByte(uint16_t addr, uint8_t data)
 {
+    HAL_Delay(10);
     if (HAL_I2C_Mem_Write(&M24C64_I2C, M24C64_ADDR_W, addr,
                           I2C_MEMADD_SIZE_16BIT, &data, 1, 100) != HAL_OK)
         return HAL_ERROR;

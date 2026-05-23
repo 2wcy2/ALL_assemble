@@ -4,7 +4,7 @@
 #include "usart.h"
 #include "global/animal_state.h"
 #include "commun_manager/commun_manager.h"
-#define data_len 25
+
 
 // 辅助函数：将 uint16_t 转为大端序 2 字节
 void uint16ToBytes(uint16_t val, uint8_t *buf) {
@@ -18,7 +18,53 @@ void uint32ToBytes(uint32_t value, uint8_t *buffer) {
     buffer[1] = (uint8_t)((value >> 16) & 0xFF);
     buffer[0] = (uint8_t)((value >> 24) & 0xFF);   // 高字节
 }
+/**
+ * @brief  生成 4G 文本格式数据包（动态分配内存）
+ * @param  state : 动物状态结构体指针
+ * @return 成功返回动态分配的字符串指针，失败返回 NULL
+ *         调用者使用完毕后需 vPortFree() 释放
+ */
+char* Fourg_TextFrameMaker(const animalState *state)
+{
+    if (state == NULL) return NULL;
 
+    // 预估最大长度：
+    // 时间 19 字节 + 经纬度各 12 字节 + 温度 5 + 步数 10 + 电压 5 + 速度 5 + 标志 2 + 逗号 8 个 + 结束符 = 约 80 字节
+    // 为安全起见，分配 128 字节
+    char *buf = (char *)pvPortMalloc(Fourg_Data_len);
+    memset(buf, 0, Fourg_Data_len);
+    if (buf == NULL) return NULL;
+
+    // 格式化数据：
+    // 格式：年-月-日 时:分:秒,纬度,经度,温度,步数,电压,速度,GPS标志,卫星标志
+    int written = snprintf(buf, Fourg_Data_len,
+        "%04u-%02u-%02u %02u:%02u:%02u,%.6f,%.6f,%.1f,%lu,%.2f,%.1f,%d,%c,%d",
+        state->beijing_date_time.year,
+        state->beijing_date_time.month,
+        state->beijing_date_time.day,
+        state->beijing_date_time.hour,
+        state->beijing_date_time.minute,
+        state->beijing_date_time.second,
+        state->latitude,
+        state->longitude,
+        state->temperature,
+        (unsigned long)state->steps,
+        state->voltage,
+        state->speed,
+        state->gps_data_valid,
+        state->gps_location_valid,
+        state->star_state
+    );
+
+    // 如果 snprintf 返回的长度超过分配大小（理论上不会，但做保护）
+    if (written < 0 || written >= (int)Fourg_Data_len) {
+        // 截断或返回错误，这里简单返回 NULL
+        vPortFree(buf);
+        return NULL;
+    }
+
+    return buf;
+}
 void framemaker(uint8_t *outstr, animalState *state) {
     // 清零整个缓冲区，同时保证校验和从 0 开始累加
     memset(outstr, 0, 25);  // 根据实际长度调整
@@ -73,12 +119,30 @@ void Start_info_assemble_task(void *argument) {
         uint32_t flags = osThreadFlagsWait(FLAG_SENSOR_READY | FLAG_GNSS_READY,
                                     osFlagsWaitAll,   // 关键：必须两个标志位都置位
                                     osWaitForever);
-        uint8_t* message=pvPortMalloc(sizeof(uint8_t)*data_len);
-        memset(message,0,sizeof(uint8_t)*data_len);
-        framemaker(message,&animal_state);
-        SelectCommMethod();
-        osMessageQueuePut(info_transHandle,&message,0,osWaitForever);
-        HAL_UART_Transmit(&test_uart, message, data_len, 1000);
-        HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+        /* 选择通信通道（内部会尝试初始化 4G，失败时自动断电并返回卫星） */
+        CommMethod_t method = SelectCommMethod();
+
+        /* 投递到对应队列，队列满会阻塞直到有空间（osWaitForever） */
+        if (method == COMM_4G) {
+            char *text_msg = Fourg_TextFrameMaker(&animal_state);
+            if (osMessageQueuePut(info_trans_4gHandle, &text_msg, 0, 2000)!=osOK) {
+                vPortFree(text_msg);
+            }
+        }
+        else {
+            /* 分配消息内存 */
+            uint8_t *message = pvPortMalloc(sizeof(uint8_t) * Sat_Data_len);
+            if (message == NULL) {
+                // 分配失败，可根据需要记录错误，然后继续等待下一次触发
+                continue;
+            }
+            memset(message, 0, sizeof(uint8_t) * Sat_Data_len);
+
+            /* 组装数据帧 */
+            framemaker(message, &animal_state);
+            if (osMessageQueuePut(info_trans_sateHandle, &message, 0, 2000)!=osOK) {
+                vPortFree(message);
+            }
+        }
     }
 }

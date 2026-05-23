@@ -48,7 +48,9 @@ extern "C" {
   extern uint16_t len_4g;
   extern TaskHandle_t xGpsTaskHandle;
   extern osThreadId_t info_assemble_tHandle;
-  extern osMessageQueueId_t info_transHandle;
+  extern osMessageQueueId_t info_trans_4gHandle;
+  extern osMessageQueueId_t info_trans_sateHandle;
+
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
@@ -87,6 +89,8 @@ void Error_Handler(void);
 #define hlpuart1  test_uart
 #define FLAG_SENSOR_READY  0x01
 #define FLAG_GNSS_READY    0x02
+#define Sat_Data_len 25
+#define Fourg_Data_len 128
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

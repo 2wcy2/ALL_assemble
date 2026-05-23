@@ -9,6 +9,7 @@
 #include "main.h"
 #include "usart.h"
 #include <string.h>
+#include "4G_AT/Fourg_AT.h"
 typedef enum {
     COMM_4G = 0,
     COMM_SATELLITE

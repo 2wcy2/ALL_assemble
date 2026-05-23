@@ -66,7 +66,7 @@ osThreadId_t star_communHandle;
 const osThreadAttr_t star_commun_attributes = {
   .name = "star_commun",
   .stack_size = 256 * 4,
-  .priority = (osPriority_t) osPriorityNormal1,
+  .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for commun_4g */
 osThreadId_t commun_4gHandle;
@@ -82,10 +82,22 @@ const osThreadAttr_t info_assemble_t_attributes = {
   .stack_size = 1024 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-/* Definitions for info_trans */
-osMessageQueueId_t info_transHandle;
-const osMessageQueueAttr_t info_trans_attributes = {
-  .name = "info_trans"
+/* Definitions for flash_task */
+osThreadId_t flash_taskHandle;
+const osThreadAttr_t flash_task_attributes = {
+  .name = "flash_task",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
+/* Definitions for info_trans_4g */
+osMessageQueueId_t info_trans_4gHandle;
+const osMessageQueueAttr_t info_trans_4g_attributes = {
+  .name = "info_trans_4g"
+};
+/* Definitions for info_trans_sate */
+osMessageQueueId_t info_trans_sateHandle;
+const osMessageQueueAttr_t info_trans_sate_attributes = {
+  .name = "info_trans_sate"
 };
 /* Definitions for i2c1mutex */
 osMutexId_t i2c1mutexHandle;
@@ -103,6 +115,7 @@ extern void Start_gps_locate_task(void *argument);
 extern void Start_star_communication_task(void *argument);
 extern void Start_4g_commun(void *argument);
 extern void Start_info_assemble_task(void *argument);
+void Start_flash_task(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -132,8 +145,11 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END RTOS_TIMERS */
 
   /* Create the queue(s) */
-  /* creation of info_trans */
-  info_transHandle = osMessageQueueNew (16, sizeof(uint8_t*), &info_trans_attributes);
+  /* creation of info_trans_4g */
+  info_trans_4gHandle = osMessageQueueNew (16, sizeof(uint8_t*), &info_trans_4g_attributes);
+
+  /* creation of info_trans_sate */
+  info_trans_sateHandle = osMessageQueueNew (16, sizeof(uint8_t*), &info_trans_sate_attributes);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
@@ -154,6 +170,9 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of info_assemble_t */
   info_assemble_tHandle = osThreadNew(Start_info_assemble_task, NULL, &info_assemble_t_attributes);
+
+  /* creation of flash_task */
+  flash_taskHandle = osThreadNew(Start_flash_task, NULL, &flash_task_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -181,6 +200,25 @@ __weak void Start_SensorTask(void *argument)
     osDelay(1);
   }
   /* USER CODE END Start_SensorTask */
+}
+
+/* USER CODE BEGIN Header_Start_flash_task */
+/**
+* @brief Function implementing the flash_task thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_Start_flash_task */
+void Start_flash_task(void *argument)
+{
+  /* USER CODE BEGIN Start_flash_task */
+  /* Infinite loop */
+  for(;;)
+  {
+    HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+    osDelay(1000);
+  }
+  /* USER CODE END Start_flash_task */
 }
 
 /* Private application code --------------------------------------------------*/

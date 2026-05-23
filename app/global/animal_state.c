@@ -1,6 +1,7 @@
 #include "global/animal_state.h"
 animalState animal_state={
     0,
+    'V',
     0,
     0,
     0,
