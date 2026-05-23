@@ -52,7 +52,7 @@ void Start_gps_locate_task(void *argument) {
                 animal_state.beijing_date_time = rmc_data.beijing_date_time;
                 animal_state.gps_data_valid = rmc_data.valid;
                 animal_state.gps_location_valid = rmc_data.status;
-                osThreadFlagsSet(info_assemble_tHandle, FLAG_GNSS_READY);
+                osThreadFlagsSet(info_assembleHandle, FLAG_GNSS_READY);
             }
             // 解析成功
             // char msg[128];

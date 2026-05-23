@@ -116,7 +116,7 @@ void framemaker(uint8_t *outstr, animalState *state) {
 
 void Start_info_assemble_task(void *argument) {
     while (1) {
-        uint32_t flags = osThreadFlagsWait(FLAG_SENSOR_READY | FLAG_GNSS_READY,
+        osThreadFlagsWait(FLAG_SENSOR_READY /*| FLAG_GNSS_READY*/,
                                     osFlagsWaitAll,   // 关键：必须两个标志位都置位
                                     osWaitForever);
         /* 选择通信通道（内部会尝试初始化 4G，失败时自动断电并返回卫星） */

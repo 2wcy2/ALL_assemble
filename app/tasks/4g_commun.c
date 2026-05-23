@@ -10,8 +10,8 @@ void Start_4g_commun() {
         uint8_t* msg;
         osMessageQueueGet(info_trans_4gHandle,&msg,0,osWaitForever);
         FourG_SendData(0,msg,strlen(msg));
+        FourG_PowerOffAndWait();
         //FourG_SendData(0,"hello",5);
         vPortFree(msg);
-        osDelay(1000);
     }
 }

@@ -47,7 +47,7 @@ extern "C" {
   extern uint16_t len_test;
   extern uint16_t len_4g;
   extern TaskHandle_t xGpsTaskHandle;
-  extern osThreadId_t info_assemble_tHandle;
+  extern osThreadId_t info_assembleHandle;
   extern osMessageQueueId_t info_trans_4gHandle;
   extern osMessageQueueId_t info_trans_sateHandle;
 

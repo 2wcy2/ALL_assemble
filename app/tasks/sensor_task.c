@@ -1,3 +1,5 @@
+
+#include "FreeRTOS.h"
 #include "adc.h"
 #include"main.h"
 #include "global/animal_state.h"
@@ -5,7 +7,7 @@
 #include "usart.h"
 #include <stdio.h>
 #include <string.h>
-#include "FreeRTOS.h"
+
 #include "MY_lis2dux12/MY_lis2dux12.h"
 #include "AHT20-F/aht20.h"
 
@@ -58,7 +60,7 @@ void Start_SensorTask(void *argument) {
 
 
 
-        osThreadFlagsSet(info_assemble_tHandle, FLAG_SENSOR_READY);
-        osDelay(5000);
+        osThreadFlagsSet(info_assembleHandle, FLAG_SENSOR_READY);
+        osDelay(1000*60*3);
     }
 }

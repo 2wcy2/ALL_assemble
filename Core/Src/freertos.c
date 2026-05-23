@@ -65,20 +65,20 @@ const osThreadAttr_t gps_locate_task_attributes = {
 osThreadId_t star_communHandle;
 const osThreadAttr_t star_commun_attributes = {
   .name = "star_commun",
-  .stack_size = 256 * 4,
+  .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for commun_4g */
 osThreadId_t commun_4gHandle;
 const osThreadAttr_t commun_4g_attributes = {
   .name = "commun_4g",
-  .stack_size = 512 * 4,
+  .stack_size = 1024 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-/* Definitions for info_assemble_t */
-osThreadId_t info_assemble_tHandle;
-const osThreadAttr_t info_assemble_t_attributes = {
-  .name = "info_assemble_t",
+/* Definitions for info_assemble */
+osThreadId_t info_assembleHandle;
+const osThreadAttr_t info_assemble_attributes = {
+  .name = "info_assemble",
   .stack_size = 1024 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
@@ -168,8 +168,8 @@ void MX_FREERTOS_Init(void) {
   /* creation of commun_4g */
   commun_4gHandle = osThreadNew(Start_4g_commun, NULL, &commun_4g_attributes);
 
-  /* creation of info_assemble_t */
-  info_assemble_tHandle = osThreadNew(Start_info_assemble_task, NULL, &info_assemble_t_attributes);
+  /* creation of info_assemble */
+  info_assembleHandle = osThreadNew(Start_info_assemble_task, NULL, &info_assemble_attributes);
 
   /* creation of flash_task */
   flash_taskHandle = osThreadNew(Start_flash_task, NULL, &flash_task_attributes);

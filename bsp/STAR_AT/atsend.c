@@ -38,12 +38,12 @@ int ATwake() {
 
 
 /**
- * @brief   将 uint8_t 数组转换为ATsend命令后由串口发送,返回1：正常，0：异常
+ * @brief   将 uint8_t 数组转换为ATsend命令后由串口发送
  * @param   data     原始数据指针
  * @param   data_len      数据长度（字节）
  */
 void ATsendcmd(const uint8_t *data, uint16_t data_len) {
-    char sendstr[50]="";
+    char sendstr[100]="";
     strcpy(sendstr,"AT+SEND=");
     sprintf(sendstr,"%s%d,",sendstr,data_len);
     BytesToHexString(data,data_len,&sendstr[strlen(sendstr)]);
