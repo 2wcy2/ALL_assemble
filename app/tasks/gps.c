@@ -2,10 +2,12 @@
 #include "cmsis_os2.h"
 #include "main.h"
 #include "FreeRTOS.h"
+#include "rtc.h"
 #include "task.h"
 #include "gprmc/gprmc.h"
 #include "usart.h"
 #include "global/animal_state.h"
+#include "rtc.h"
 
 int rx_gps_flag=0;
 char gps_message[1500]="";
@@ -43,16 +45,33 @@ void Start_gps_locate_task(void *argument) {
         GPRMC_DATA rmc_data;
         memset(&rmc_data, 0, sizeof(rmc_data));
         if (parse_gprmc_from_buffer(gps_message, &rmc_data) == 0) {
-            if (rmc_data.valid==1) {
-                strcpy(animal_state.beijing_date,rmc_data.beijing_date);
-                strcpy(animal_state.beijing_time,rmc_data.beijing_time);
+            animal_state.gps_data_valid = rmc_data.valid;
+            animal_state.gps_location_valid = rmc_data.status;
+            if (rmc_data.status=='A') {
+
+                RTC_DateTypeDef sDate = {0};
+                RTC_TimeTypeDef sTime = {0};
+
+                // 从 DateTime beijing_date_time 提取
+                sDate.Year = rmc_data.beijing_date_time.year - 2000; // 假设year是四位整数
+                sDate.Month = rmc_data.beijing_date_time.month;
+                sDate.Date = rmc_data.beijing_date_time.day;
+                sDate.WeekDay = RTC_WEEKDAY_MONDAY; // 或根据日期计算，假设暂不关心
+
+                sTime.Hours = rmc_data.beijing_date_time.hour;
+                sTime.Minutes = rmc_data.beijing_date_time.minute;
+                sTime.Seconds = rmc_data.beijing_date_time.second;
+                sTime.SubSeconds = 0;
+                sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+                sTime.StoreOperation = RTC_STOREOPERATION_RESET;
+
+                HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+                HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
                 animal_state.latitude = rmc_data.latitude;
                 animal_state.longitude = rmc_data.longitude;
                 animal_state.speed = rmc_data.speed;
                 animal_state.beijing_date_time = rmc_data.beijing_date_time;
-                animal_state.gps_data_valid = rmc_data.valid;
-                animal_state.gps_location_valid = rmc_data.status;
-                osThreadFlagsSet(info_assembleHandle, FLAG_GNSS_READY);
+                osDelay(10000);
             }
             // 解析成功
             // char msg[128];

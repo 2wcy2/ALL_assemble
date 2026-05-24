@@ -58,7 +58,7 @@ const osThreadAttr_t SensorTask_attributes = {
 osThreadId_t gps_locate_taskHandle;
 const osThreadAttr_t gps_locate_task_attributes = {
   .name = "gps_locate_task",
-  .stack_size = 512 * 4,
+  .stack_size = 768 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for star_commun */
@@ -72,7 +72,7 @@ const osThreadAttr_t star_commun_attributes = {
 osThreadId_t commun_4gHandle;
 const osThreadAttr_t commun_4g_attributes = {
   .name = "commun_4g",
-  .stack_size = 1024 * 4,
+  .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for info_assemble */
@@ -86,8 +86,8 @@ const osThreadAttr_t info_assemble_attributes = {
 osThreadId_t flash_taskHandle;
 const osThreadAttr_t flash_task_attributes = {
   .name = "flash_task",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+  .stack_size = 180 * 4,
+  .priority = (osPriority_t) osPriorityAboveNormal3,
 };
 /* Definitions for info_trans_4g */
 osMessageQueueId_t info_trans_4gHandle;
@@ -118,6 +118,18 @@ extern void Start_info_assemble_task(void *argument);
 void Start_flash_task(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
+
+/* USER CODE BEGIN PREPOSTSLEEP */
+__weak void PreSleepProcessing(uint32_t ulExpectedIdleTime)
+{
+/* place for user code */
+}
+
+__weak void PostSleepProcessing(uint32_t ulExpectedIdleTime)
+{
+/* place for user code */
+}
+/* USER CODE END PREPOSTSLEEP */
 
 /**
   * @brief  FreeRTOS initialization

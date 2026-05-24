@@ -1,6 +1,7 @@
 
 #include "cmsis_os2.h"
 #include "main.h"
+#include "rtc.h"
 #include "usart.h"
 #include "global/animal_state.h"
 #include "commun_manager/commun_manager.h"
@@ -34,17 +35,21 @@ char* Fourg_TextFrameMaker(const animalState *state)
     char *buf = (char *)pvPortMalloc(Fourg_Data_len);
     memset(buf, 0, Fourg_Data_len);
     if (buf == NULL) return NULL;
-
+    // 2. 从 RTC 获取当前北京时间
+    RTC_DateTypeDef sDate;
+    RTC_TimeTypeDef sTime;
+    HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);   // 先读时间
+    HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);   // 再读日期
     // 格式化数据：
     // 格式：年-月-日 时:分:秒,纬度,经度,温度,步数,电压,速度,GPS标志,卫星标志
     int written = snprintf(buf, Fourg_Data_len,
         "%04u-%02u-%02u %02u:%02u:%02u,%.6f,%.6f,%.1f,%lu,%.2f,%.1f,%d,%c,%d",
-        state->beijing_date_time.year,
-        state->beijing_date_time.month,
-        state->beijing_date_time.day,
-        state->beijing_date_time.hour,
-        state->beijing_date_time.minute,
-        state->beijing_date_time.second,
+        (unsigned int)(sDate.Year + 2000),   // 从 RTC 读取，偏移量+2000 恢复公元年
+        sDate.Month,
+        sDate.Date,
+        sTime.Hours,
+        sTime.Minutes,
+        sTime.Seconds,
         state->latitude,
         state->longitude,
         state->temperature,
@@ -71,14 +76,18 @@ void framemaker(uint8_t *outstr, animalState *state) {
 
     // 字节 0：协议编号
     outstr[0] = 0x02;
-
-    // 字节 1-6：北京时间 (DateTime 需定义)
-    outstr[1] = state->beijing_date_time.year - 2000;   // 年（0~99）
-    outstr[2] = state->beijing_date_time.month;
-    outstr[3] = state->beijing_date_time.day;
-    outstr[4] = state->beijing_date_time.hour;
-    outstr[5] = state->beijing_date_time.minute;
-    outstr[6] = state->beijing_date_time.second;
+    // 2. 从 RTC 获取当前北京时间
+    RTC_DateTypeDef sDate;
+    RTC_TimeTypeDef sTime;
+    HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);   // 先读时间
+    HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);   // 再读日期
+    // 4. 字节 1-6：北京时间（直接取自 RTC）
+    outstr[1] = sDate.Year;       // HAL 库 Year 已为偏移量（0~99），无需再减 2000
+    outstr[2] = sDate.Month;
+    outstr[3] = sDate.Date;
+    outstr[4] = sTime.Hours;
+    outstr[5] = sTime.Minutes;
+    outstr[6] = sTime.Seconds;
 
     // 字节 7-10：纬度（大端 uint32，单位：1e-6 度，偏移 +90°）
     uint32_t lat = (uint32_t)((state->latitude + 90.0) * 1000000.0);
