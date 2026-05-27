@@ -37,7 +37,7 @@ bool FourG_OpenTCPSocket(uint8_t socket_id, const char *remote_ip, uint16_t remo
 bool FourG_SendData(uint8_t socket_id, const uint8_t *data, uint16_t len);
 bool FourG_CloseSocket(uint8_t socket_id);
 
-
+bool FourG_SyncRTC(void);   // 从模块读取当前时间并写入 MCU RTC
 
 
 #endif //ALL_ASSEMBLE_FOURG_AT_H

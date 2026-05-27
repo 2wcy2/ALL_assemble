@@ -133,6 +133,7 @@ void Start_info_assemble_task(void *argument) {
 
         /* 投递到对应队列，队列满会阻塞直到有空间（osWaitForever） */
         if (method == COMM_4G) {
+            FourG_SyncRTC();
             char *text_msg = Fourg_TextFrameMaker(&animal_state);
             if (osMessageQueuePut(info_trans_4gHandle, &text_msg, 0, 2000)!=osOK) {
                 vPortFree(text_msg);

@@ -1,5 +1,7 @@
 #include"4G_AT/Fourg_AT.h"
 
+#include "rtc.h"
+
 /**
  * @brief   将 uint8_t 数组转换为大写十六进制字符串
  * @param   data     原始数据指针
@@ -195,4 +197,97 @@ bool FourG_CloseSocket(uint8_t socket_id)
     if (!AT_sendFourg(cmd, buf, sizeof(buf), 3000))
         return false;
     return (strstr(buf, "OK") != NULL);
+}
+
+
+/**
+ * @brief   将给定的年月日时分秒增加指定小时数（处理跨天/跨月/跨年）
+ * @param   year, mon, day, hour, min, sec 输入输出参数，会被修改
+ * @param   hoursToAdd  要增加的小时数（正数）
+ */
+static void AddHoursToDateTime(int *year, int *mon, int *day,
+                               int *hour, int *min, int *sec,
+                               int hoursToAdd)
+{
+    *hour += hoursToAdd;
+
+    // 处理小时溢出到天
+    while (*hour >= 24) {
+        *hour -= 24;
+        (*day)++;
+    }
+
+    // 每月天数表
+    static const int days_in_month[] = { 31,28,31,30,31,30,31,31,30,31,30,31 };
+
+    while (1) {
+        int max_day = days_in_month[*mon - 1];
+
+        // 闰年2月特殊处理
+        if (*mon == 2) {
+            if ((*year % 4 == 0 && *year % 100 != 0) || (*year % 400 == 0))
+                max_day = 29;
+        }
+
+        if (*day <= max_day)
+            break;
+
+        *day -= max_day;
+        (*mon)++;
+        if (*mon > 12) {
+            *mon = 1;
+            (*year)++;
+        }
+    }
+}
+/**
+ * @brief   从 4G 模块直接读取当前时间（AT+CCLK?）并写入 RTC
+ * @note    依赖模块已注册网络并自动同步了基站时间，无需额外 NTP 步骤
+ * @return  true: 成功写入 RTC；false: 失败
+ */
+bool FourG_SyncRTC(void)
+{
+    char buf[100];
+
+    // 1. 确保网络已注册
+    if (!FourG_IsNetworkRegistered()) {
+        return false;
+    }
+    if (!AT_sendFourg("AT+CCLK?\r\n", buf, sizeof(buf), 3000))
+        return false;
+
+    char *p = strstr(buf, "+CCLK:");
+    if (!p) return false;
+
+    int year, mon, day, hour, min, sec, tz;
+    if (sscanf(p, "+CCLK: \"%d/%d/%d,%d:%d:%d+%d\"", &year, &mon, &day, &hour, &min, &sec, &tz) == 7) {
+        if (year < 2000) year += 2000;
+    } else if (sscanf(p, "+CCLK: \"%d/%d/%d,%d:%d:%d\"", &year, &mon, &day, &hour, &min, &sec) == 6) {
+        if (year < 2000) year += 2000;
+    } else {
+        return false;
+    }
+
+    // 6. 校验年份，防止同步失败时写入出厂时间（例如 2000 年）
+    if (year < 2023) {   // 根据实际使用年份调整阈值
+        return false;
+    }
+    // 7. **核心：UTC -> 北京时间（+8 小时），自动处理跨日/跨月/跨年**
+    AddHoursToDateTime(&year, &mon, &day, &hour, &min, &sec, 8);
+    // 7. 写入 MCU RTC
+    RTC_TimeTypeDef sTime = {0};
+    RTC_DateTypeDef sDate = {0};
+    sTime.Hours   = hour;
+    sTime.Minutes = min;
+    sTime.Seconds = sec;
+    sTime.TimeFormat = RTC_HOURFORMAT_24;
+    sDate.Year    = year - 2000;
+    sDate.Month   = mon;
+    sDate.Date    = day;
+    sDate.WeekDay = RTC_WEEKDAY_MONDAY;
+
+    if (HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN) != HAL_OK) return false;
+    if (HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN) != HAL_OK) return false;
+
+    return true;
 }

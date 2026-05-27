@@ -32,6 +32,7 @@ CommMethod_t SelectCommMethod(void)
         if (!FourG_IsNetworkRegistered()) goto cleanup;
     }
 
+
     /* 5. 定义 APN */
     if (!FourG_DefineAPN("CMNET")) goto cleanup;
 
